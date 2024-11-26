@@ -7,6 +7,11 @@ import pandas as pd
 import docx2txt
 import argparse
 
+from docx import Document
+from docx.shared import Inches
+import ast
+import platform
+
 from PIL import Image
 from pathlib import Path
 
@@ -433,6 +438,12 @@ def create_word_document(df_brca, file_path):
 
     # # Create the file path
     # file_path = os.path.join(output_folder, "all.docx")
+    
+    # Create the output folder if it does not exist
+    output_folder, file_name = os.path.split(file_path)
+    
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
         
     # Save the document
     doc.save(file_path)
@@ -490,18 +501,19 @@ def read_config():
     args = parser.parse_args()
     
     # Return the zip file path
-    return args.zip_file_path  
+    return args
 
 if __name__ == "__main__":
     # Read the configuration to get the zip file path
-    downloaded_zip_file = read_config()
+    args = read_config()
+    downloaded_zip_file = args.zip_file_path #     read_config()
     downloaded_zip_file = os.path.join(root_folder, downloaded_zip_file)
     
     # Call the function to create BRCA data using the downloaded zip file
     create_brca_data(downloaded_zip_file)
     
-    output_folder = 'create_image_and_annotation_folder'
-    file_name = 'patient_all.docx'
+    output_folder = args.output_folder 
+    file_name = args.file_name 
 
     # Create the file path
     file_path = os.path.join(output_folder, file_name)
